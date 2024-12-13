@@ -1,0 +1,50 @@
+[
+{
+	"uri": "//localhost:1313/",
+	"title": "Introduction to Application Load Balancing - AWS",
+	"tags": [],
+	"description": "",
+	"content": "Introduction to Application Load Balancing – AWS Overview Application Load Balancer (ALB) is a service that provides the ability to distribute application traffic to multiple backend servers to ensure high performance and availability of the application. ALB is a component of the Elastic Load Balancing (ELB) service of Amazon Web Services (AWS).\nApplications Suitable for web applications or APIs that require complex routing capabilities.\nOptimized for microservices architectures thanks to flexible routing capabilities.\nUsed in DevOps environments to manage traffic to different service instances.\nBenefits of using Elastic Load Balancing Improve application performance.\nIncrease fault tolerance with load balancing and automatic traffic redirection.\nSimplify HTTPS protocol management and security.\nLab practice model Main content Create EC2 Create Target Group Create Load Balancer Clean-up resources "
+},
+{
+	"uri": "//localhost:1313/1-create-ec2/",
+	"title": "Create EC2",
+	"tags": [],
+	"description": "",
+	"content": " Note: We will use default VPC and Subnet to quickly create EC2\nAccess AWS Management Console: Navigate to EC2 Click Instances Click on Launch Instance to create the first instance Name Instance\nSelect Amazon Linux 2023 AMI (HVM) Select initance type as t2.micro\nclick create new key peir ! initance type\nName the key pair\nSelect the key pair as RDS\nPrivate key file format as ** .pem**\nClick Create key pair In the security group section, select Select existing security group\nCommon security group select default VPV In the Advanced details section we will use a Bash script to set Quickly set up an Apache web server on an AWS EC2 instance, and display the instance\u0026rsquo;s IP address (Private and Public) on the web page. - Copy the Bash script below and paste it into User data\n#!/bin/bash yum install httpd -y service httpd start chconfig httpd on cd /var/www/html echo \u0026#34;\u0026lt;html\u0026gt;\u0026#34; \u0026gt; index.html echo \u0026#34;\u0026lt;h1 style=\u0026#39;color:blue;\u0026#39;\u0026gt;Welcome to Udemy instance - A\u0026lt;/h1\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;h4 style=\u0026#39;color:red;\u0026#39;\u0026gt;You are running instance from this IP (For debug only!!!!Do not publish this to user):\u0026lt;/h4\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html export TOKEN=`curl -X PUT \u0026#34;http://169.254.169.254/latest/api/token\u0026#34; -H \u0026#34;X-aws-ec2-metadata-token-ttl-seconds: 21600\u0026#34;` echo \u0026#34;\u0026lt;br\u0026gt;Private IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/local-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;br\u0026gt;Public IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/public-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;/html\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html Check the configuration again and click Launch instance How to create second Instance as same as first Instance so you create another instance as above. ⚠️ Note: The Bash script of the second instance will be different from the first instance so we can distinguish.\nBash script of the second instance #!/bin/bash yum install httpd -y service httpd start chconfig httpd on cd /var/www/html echo \u0026#34;\u0026lt;html\u0026gt;\u0026#34; \u0026gt; index.html echo \u0026#34;\u0026lt;h1 style=\u0026#39;color:green;\u0026#39;\u0026gt;Welcome to Udemy instance - B\u0026lt;/h1\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;h4 style=\u0026#39;color:red;\u0026#39;\u0026gt;You are running instance from this IP (For debug only!!!!Do not publish this to user):\u0026lt;/h4\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html export TOKEN=`curl -X PUT \u0026#34;http://169.254.169.254/latest/api/token\u0026#34; -H \u0026#34;X-aws-ec2-metadata-token-ttl-seconds: 21600\u0026#34;` echo \u0026#34;\u0026lt;br\u0026gt;Private IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/local-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;br\u0026gt;Public IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/public-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;/html\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html These are the two Instances after being successfully created Check the inbound rules of the security group and add HTTP method if not present\nSelect security group of one of the two instances just created Click Edit Inbound rules Click Add rules to add a method HTTP and click Save rules To check if the two instances are working, we will open a new tab and paste the Public IP of each instance Open a new tab and paste the Public IP ![check web](/images /ALBimg/checkweb-01.png) Next we will create Target group to add the two newly created Instances\n"
+},
+{
+	"uri": "//localhost:1313/2-create-target-group/",
+	"title": "Target Group",
+	"tags": [],
+	"description": "",
+	"content": " In the Dashboard section, pull down Load balancing and select Target group Select Create Target group Select Target type: Instance Name the target group\nName the target group\nSelect HTTP method and port 80\nIP address type is IPV4\nClick Next\nSelect the instances you want to associate with the target group Click Include as pending below Click Create target group Target group after successful creation "
+},
+{
+	"uri": "//localhost:1313/3-create-load-balancer/",
+	"title": "Create Application Load Balancer",
+	"tags": [],
+	"description": "",
+	"content": " In the Dashboard section, scroll down to Load balancing, select Load Balancer and select create load balancer. Select Application load balancer and click create Name the load balancer Select internet-facing Select all AZ Select default SG and select the newly created target group\nAfter successfully creating ALB To check, copy the DNS name of the load balancer in a new tab. If you see the web change by almost 50% after each reload, congratulations you have completed the lab. "
+},
+{
+	"uri": "//localhost:1313/4-cleanup-resources/",
+	"title": "Clean up resources",
+	"tags": [],
+	"description": "",
+	"content": " Delete the Load Balancer. Select Actions and select delete load balancer Enter confirm and select delete Delete the EC2 Instances. Select the instance to delete Select instance state Select Terminate to delete Delete the Target Group. Select TG to delete\nSelect Actions\nSelect delete to delete and confirm deletion Good luck\n"
+},
+{
+	"uri": "//localhost:1313/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "//localhost:1313/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]

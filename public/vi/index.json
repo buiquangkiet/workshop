@@ -1,0 +1,50 @@
+[
+{
+	"uri": "//localhost:1313/vi/",
+	"title": "Giới thiệu Application Load Balancing - AWS",
+	"tags": [],
+	"description": "",
+	"content": "Giới thiệu Application Load Balancing – AWS Tổng quan Application Load Balancer (ALB) là một dịch vụ cung cấp khả năng phân phối lưu lượng ứng dụng đến nhiều máy chủ backend nhằm đảm bảo hiệu suất và độ sẵn sàng cao của ứng dụng. ALB là một thành phần trong dịch vụ Elastic Load Balancing (ELB) của Amazon Web Services (AWS).\nỨng dụng Phù hợp với các ứng dụng web hoặc API yêu cầu khả năng định tuyến phức tạp. Tối ưu cho các kiến trúc microservices nhờ vào khả năng định tuyến linh hoạt. Được sử dụng trong môi trường DevOps để quản lý lưu lượng đến các phiên bản dịch vụ khác nhau. Lợi ích của việc sử dụng Elastic Load Balancing Cải thiện hiệu suất ứng dụng. Tăng khả năng chịu lỗi nhờ tính năng cân bằng tải và tự động chuyển hướng lưu lượng. Đơn giản hóa việc quản lý giao thức HTTPS và bảo mật. Mô hình thực hành bài Lab Nội dung chính Tạo EC2 Tạo Target Group Tạo Load Balancer Dọn dẹp tài nguyên "
+},
+{
+	"uri": "//localhost:1313/vi/1-create-ec2/",
+	"title": "Tạo EC2",
+	"tags": [],
+	"description": "",
+	"content": " Ghi chú: Chúng ta sẽ dùng default VPC và Subnet để tạo nhanh EC2\nTruy cập AWS Management Console: Điều hướng đến EC2 Nhấp vào Instances Click vào Launch Instance để tạo instance thứ nhất Đặt tên cho Instance\nChọn Amazon Linux 2023 AMI (HVM) Chọn initance type là t2.micro\nclick tạo key peir mới Đặt tên cho key pair\nChọn key pair là RDS\nPrivate key file formart là .pem\nClick Create key pair Phần security group chọn Select existing security group\nCommon security group chọn default VPV Ở phần Advanced details chúng ta sẽ dùng script Bash để thiết lập nhanh một máy chủ web Apache trên một instance AWS EC2, đồng thời hiển thị địa chỉ IP (Private và Public) của instance trên trang web.\nCopy đoạn script Bash phía dưới và dán vào User data #!/bin/bash yum install httpd -y service httpd start chconfig httpd on cd /var/www/html echo \u0026#34;\u0026lt;html\u0026gt;\u0026#34; \u0026gt; index.html echo \u0026#34;\u0026lt;h1 style=\u0026#39;color:blue;\u0026#39;\u0026gt;Welcome to Udemy instance - A\u0026lt;/h1\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;h4 style=\u0026#39;color:red;\u0026#39;\u0026gt;You are running instance from this IP (For debug only!!!!Do not public this to user):\u0026lt;/h4\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html export TOKEN=`curl -X PUT \u0026#34;http://169.254.169.254/latest/api/token\u0026#34; -H \u0026#34;X-aws-ec2-metadata-token-ttl-seconds: 21600\u0026#34;` echo \u0026#34;\u0026lt;br\u0026gt;Private IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/local-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;br\u0026gt;Public IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/public-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;/html\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html Kiểm tra lại cấu hình và click Launch instance Cách tạo Instance thứ hai như giống như Instance thứ nhất nên bạn hãy tạo thêm một instance như cách trên. ⚠️ Lưu ý: Đoạn script Bash của instance thứ hai sẽ khác của instance thứ nhất để chúng ta có thể phân biệt.\nĐoạn script Bash của instance thứ hai #!/bin/bash yum install httpd -y service httpd start chconfig httpd on cd /var/www/html echo \u0026#34;\u0026lt;html\u0026gt;\u0026#34; \u0026gt; index.html echo \u0026#34;\u0026lt;h1 style=\u0026#39;color:green;\u0026#39;\u0026gt;Welcome to Udemy instance - B\u0026lt;/h1\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;h4 style=\u0026#39;color:red;\u0026#39;\u0026gt;You are running instance from this IP (For debug only!!!!Do not public this to user):\u0026lt;/h4\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html export TOKEN=`curl -X PUT \u0026#34;http://169.254.169.254/latest/api/token\u0026#34; -H \u0026#34;X-aws-ec2-metadata-token-ttl-seconds: 21600\u0026#34;` echo \u0026#34;\u0026lt;br\u0026gt;Private IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/local-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;br\u0026gt;Public IP: \u0026#34; \u0026gt;\u0026gt; index.html curl -H \u0026#34;X-aws-ec2-metadata-token: $TOKEN\u0026#34; -v http://169.254.169.254/latest/meta-data/public-ipv4 \u0026gt;\u0026gt; index.html echo \u0026#34;\u0026lt;/html\u0026gt;\u0026#34; \u0026gt;\u0026gt; index.html Đây là hai Instance sau khi được tạo thành công Kiểm tra inbound rules của security group và bổ xung phương thức HTTP nếu chưa có\nChọn security group của một trong hai instance vừa tạo Click vào Edit Inbound rules Click Add rules để thêm phương thức HTTP và click Save rules Để kiểm tra hai instance có hoạt động hay chưa, chúng ta sẽ mở tab mới và dán Public IP của từng insance Mở tab mới và dán Public IP Tiếp theo chúng ta sẽ tạo Target group để thêm hai Instance vừa tạo\n"
+},
+{
+	"uri": "//localhost:1313/vi/2-create-target-group/",
+	"title": "Target Group",
+	"tags": [],
+	"description": "",
+	"content": " Ở phần Dashboard kéo xuống Load balancing chọn Target group Chọn Create Target group\nChọn Target type: Instance Đặt tên cho target group Đặt tên cho target group Chọn phương thức HTTP và port 80 IP address type là IPV4 Click Next Chọn các instances bạn muốn liên kết với target group Click Include as pending below Click Create target group Target group sau khi tạo thành công "
+},
+{
+	"uri": "//localhost:1313/vi/3-create-load-balancer/",
+	"title": "Tạo Application Load Balancer",
+	"tags": [],
+	"description": "",
+	"content": " Ở phần Dashboard kéo xuống Load balancing chọn Load Balancer và chọn create load balancer. Chọn Application load balancer và click create Đặt tên cho load balancer Chọn internet-facing Chọn tất cả AZ Chọn default SG và chọn target group vừa tạo\nSau Khi tạo ALB thành công -Để kiểm tra, bạn hãy copy DNS name của load balancer trong tab mới. nếu bạn thấy web có sự thay đổi theo tỉ lệ gần như 50% sau mỗi lần reload thì xin chúc mừng bạn đã hoàng thành bài lab.\n"
+},
+{
+	"uri": "//localhost:1313/vi/4-cleanup-resources/",
+	"title": "Dọn dẹp tài nguyên",
+	"tags": [],
+	"description": "",
+	"content": " Xóa Load Balancer. Chọn Aactions và chọn delete load balancer Nhập confirm và chọn delete Xóa các EC2 Instances. Chọn instance cần xóa Chọn instance state Chọn Terminate để xóa Xóa Target Group. Chọn TG cần xóa\nChọn Actions\nChọn delete để xóa và xác nhận xóa Chúc các bạn thành công\n"
+},
+{
+	"uri": "//localhost:1313/vi/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "//localhost:1313/vi/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]
