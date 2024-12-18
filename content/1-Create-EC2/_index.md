@@ -8,7 +8,7 @@ pre = "<b>1. </b>"
 
 > **Note:** We will use default VPC and Subnet to quickly create EC2
 
-- Access **AWS Management Console:**
+- Access **AWS Management Console :**
  - Navigate to EC2
  - Click Instances
 
